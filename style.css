@@ -1,0 +1,135 @@
+@font-face {
+    font-family: Minecraft;
+    src: url(mcfont.otf);
+}
+
+body {
+    background-color: rgb(72, 72, 72);
+    font-family: Minecraft, consolas, monospace;
+}
+
+.itempanel {
+    color: white;
+}
+
+.auc {
+    color: white;
+}
+
+div[lore] {
+    background-color: rgb(46, 46, 46);
+}
+
+span.c0 {
+    color: black;
+}
+
+span.c1 {
+    color: #0000AA;
+}
+
+span.c2 {
+    color: #00AA00;
+}
+
+span.c3 {
+    color: #00AAAA;
+}
+
+span.c4 {
+    color: #AA0000;
+}
+
+span.c5 {
+    color: #AA00AA;
+}
+
+span.c6 {
+    color: #FFAA00;
+}
+
+span.c7 {
+    color: #AAAAAA;
+}
+
+span.c8 {
+    color: #555555;
+}
+
+span.c9 {
+    color: #5555ff;
+}
+
+span.ca {
+    color: #55FF55;
+}
+
+span.cb {
+    color: #55FFFF;
+}
+
+span.cc {
+    color: #FF5555;
+}
+
+span.cd {
+    color: #FF55FF;
+}
+
+span.ce {
+    color: #FFFF55;
+}
+
+span.cf {
+    color: #FFFFFF;
+}
+
+span.cl {
+    font-weight: 600;
+}
+
+span.cm {
+    text-decoration: line-through;
+}
+
+span.cn {
+    text-decoration: underline;
+}
+
+span.co {
+    font-style: italic;
+}
+
+/* Tiers */
+
+span.COMMON {
+    color: #D1D5D8;
+}
+
+span.UNCOMMON {
+    color: #55FF55;
+}
+
+span.RARE {
+    color: #5555ff;
+}
+
+span.EPIC {
+    color: #AA00AA;
+}
+
+span.LEGENDARY {
+    color: #FFAA00;
+}
+
+span.MYTHIC {
+    color: #FF55FF;
+}
+
+span.DIVINE {
+    color: #00AAAA;
+}
+
+span.SPECIAL {
+    color: #FF5555;
+}
