@@ -169,8 +169,6 @@ const updateAuctionBrowser = async (data) => {
     }
     document.querySelector(".alert").style.display = "none"
     
-    document.querySelector("button[reload]").addEventListener("click", updateAuctionBrowser(data))
-    
     console.log(data)
 
     
