@@ -157,3 +157,14 @@ span.SPECIAL {
     justify-content: center;
     font-size: 2rem;
 }
+
+h3[credits] {
+    position: fixed;
+    text-align: center;
+    right: 0;
+    bottom: 0;
+    color: white;
+    background: black;
+    width: 40ch;
+    border-radius: 1rem;
+}
