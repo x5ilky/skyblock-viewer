@@ -55,10 +55,11 @@ const correctBin = (isbin) => {
 }
 
 const sortAuctions = (filtered) => {
-    let sortby = document.querySelector("#sort").value
+    console.log("sorting")
+    let sortby = document.getElementById("sort").value
     if (sortby === "random") return filtered;
-    if (sortby === "lowest") return filtered.sort((a, b) => getAuctionPrice(a) > getAuctionPrice(b)).sort((a, b) => getAuctionPrice(a) > getAuctionPrice(b));
-    if (sortby === "highest") return filtered.sort((a, b) => getAuctionPrice(a) < getAuctionPrice(b)).sort((a, b) => getAuctionPrice(a) < getAuctionPrice(b));
+    else if (sortby === "lowest") return filtered.sort((a, b) => (getAuctionPrice(a) - getAuctionPrice(b)))
+    else if (sortby === "highest") return filtered.sort((a, b) => -(getAuctionPrice(a) - getAuctionPrice(b)))
 }
 
 function getPrice(auc) {
@@ -71,12 +72,7 @@ function getPrice(auc) {
 }
 
 function getAuctionPrice(auc) {
-    if (auc.bin)
-    return auc.starting_bid
-    else {
-        let price = Math.max(auc.starting_bid, ...auc.bids.map(a => a.amount))
-        return price
-    }
+    return  Math.max(auc.starting_bid, ...auc.bids.map(a => a.amount))
 }
 
 function correctLore(auc) {
@@ -153,6 +149,13 @@ const updateAuctionBrowser = async (data) => {
     document.querySelector(".alert").style.display = "block"
     let pages = parseInt(prompt('How many pages (1000 auctions each)? Total pages: ' + data.totalPages))
     document.querySelector(".alert").textContent = "Downloading data: 0/" + pages
+    document.getElementById('search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('sort').addEventListener("change", () => setTimeout(() => {updateAuctionBrowser(data); console.log("test")}, 0))
+    document.getElementById('loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
     for (let i = 0; i < pages; i++) {
         console.log(`Fetching page ${i}...`)
         let res = await fetch("https://api.hypixel.net/skyblock/auctions?page=" + i)
@@ -162,6 +165,7 @@ const updateAuctionBrowser = async (data) => {
         aucs.push(...data.auctions)
         data.auctions = aucs
         updateAuctionBrowser(data)
+        d = data;
     }
     document.querySelector(".alert").style.display = "none"
     
@@ -169,12 +173,6 @@ const updateAuctionBrowser = async (data) => {
     
     console.log(data)
 
-    document.getElementById('search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    document.getElementById('rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    document.getElementById('binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    document.getElementById('stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    document.getElementById('show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    document.getElementById('sort').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    document.getElementById('loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    
 })()
 
