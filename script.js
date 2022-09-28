@@ -51,7 +51,7 @@ const correctBin = (isbin) => {
         return true;
     }
     if (rarity === "auction") return isbin === false;
-    else return true
+    else if (rarity === "bin") return isbin === true
 }
 
 const sortAuctions = (filtered) => {
@@ -101,6 +101,7 @@ function correctStars(auc) {
 }
 
 const updateAuctionBrowser = async (data) => {
+    console.log("Updated auction browser")
     howmuchshow = document.querySelector("#show").value
     
     document.querySelector(".auc").innerHTML = ""
