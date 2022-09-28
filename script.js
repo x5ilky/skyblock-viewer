@@ -147,7 +147,7 @@ const updateAuctionBrowser = async (data) => {
     let data = await res.json()
     let aucs = []
     document.querySelector(".alert").style.display = "block"
-    let pages = parseInt(prompt('How many pages (1000 auctions each)? Total pages: ' + data.totalPages))
+    let pages = data.totalPages
     document.querySelector(".alert").textContent = "Downloading data: 0/" + pages
     document.getElementById('search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
