@@ -54,24 +54,44 @@ const correctBin = (isbin) => {
     else return true
 }
 
+const sortAuctions = (filtered) => {
+    let sortby = document.querySelector("#sort").value
+    if (sortby === "random") return filtered;
+    if (sortby === "lowest") return filtered.sort((a, b) => getAuctionPrice(a) > getAuctionPrice(b)).sort((a, b) => getAuctionPrice(a) > getAuctionPrice(b));
+    if (sortby === "highest") return filtered.sort((a, b) => getAuctionPrice(a) < getAuctionPrice(b)).sort((a, b) => getAuctionPrice(a) < getAuctionPrice(b));
+}
+
+function getPrice(auc) {
+    if (auc.bin)
+    return `<span class="c6">Price: </span><span class="ce">${auc.starting_bid}</span>`
+    else {
+        let price = Math.max(auc.starting_bid, ...auc.bids.map(a => a.amount))
+        return `<span class="c6">Highest Bid: </span><span class="ce">${price}</span>`
+    }
+}
+
+function getAuctionPrice(auc) {
+    if (auc.bin)
+    return auc.starting_bid
+    else {
+        let price = Math.max(auc.starting_bid, ...auc.bids.map(a => a.amount))
+        return price
+    }
+}
+
 const updateAuctionBrowser = async (data) => {
     howmuchshow = document.querySelector("#show").value
+    
     document.querySelector(".auc").innerHTML = ""
     console.log("test")
     let filtered = data.auctions.filter(auc => auc.item_name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()) && correctRarity(auc) && correctBin(auc.bin ?? false))
+    filtered = sortAuctions(filtered)
     for (let auc of filtered.slice(0, howmuchshow)) {
         if (auc.bin) console.log("bin auction")
         let elem = document.createElement('div')
         elem.className = "itempanel"
-        function getPrice() {
-            if (auc.bin)
-            return `<span class="c6">Price: </span><span class="ce">${auc.starting_bid}</span>`
-            else {
-                let price = Math.max(auc.starting_bid, ...auc.bids.map(a => a.amount))
-                return `<span class="c6">Highest Bid: </span><span class="ce">${price}</span>`
-            }
-        }
-        elem.innerHTML = `<b>${formatName(auc)}</b> - ${getPrice()} - Lore: <button id="check-lore${auc.uuid}">Check Lore</button> - <button id="copydata${auc.uuid}">Copy auction command</button>`
+       
+        elem.innerHTML = `<b>${formatName(auc)}</b> - ${getPrice(auc)} - Lore: <button id="check-lore${auc.uuid}">Check Lore</button> - <button id="copydata${auc.uuid}">Copy auction command</button>`
         document.querySelector(".auc").appendChild(elem)
         const d = () => {
             document.getElementById(`check-lore${auc.uuid}`).outerHTML = `<div id="check-lore${auc.uuid}">${parseLore(auc.item_lore)}</div>`
@@ -123,5 +143,6 @@ const updateAuctionBrowser = async (data) => {
     document.getElementById('rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('sort').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
 })()
 
