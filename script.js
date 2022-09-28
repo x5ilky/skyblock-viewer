@@ -79,15 +79,41 @@ function getAuctionPrice(auc) {
     }
 }
 
+function correctLore(auc) {
+    let val = document.getElementById('loresearch').value.toLowerCase().split(",")
+    
+    for (let a of val) {
+        if (!auc.item_lore.toLowerCase().includes(a)) return false;
+    }
+    return true;
+}
+function correctStars(auc) {
+    let val = document.getElementById("stars").value;
+    if (val === "any") return true;
+    if (val === "no") return !auc.item_name.includes("✪")
+    if (val === "✪") return auc.item_name.replace(/[^✪]/g, "").length === 1
+    if (val === "✪✪") return auc.item_name.replace(/[^✪]/g, "").length === 2
+    if (val === "✪✪✪") return auc.item_name.replace(/[^✪]/g, "").length === 3
+    if (val === "✪✪✪✪") return auc.item_name.replace(/[^✪]/g, "").length === 4
+    if (val === "✪✪✪✪✪") return auc.item_name.replace(/[^✪]/g, "").length === 5
+    else return auc.item_name.includes(val)
+
+}
+
 const updateAuctionBrowser = async (data) => {
     howmuchshow = document.querySelector("#show").value
     
     document.querySelector(".auc").innerHTML = ""
-    console.log("test")
-    let filtered = data.auctions.filter(auc => auc.item_name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()) && correctRarity(auc) && correctBin(auc.bin ?? false))
+    let filtered = data.auctions.filter(
+        auc => 
+        auc.item_name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()) 
+        && correctRarity(auc) 
+        && correctBin(auc.bin ?? false) 
+        && correctLore(auc)
+        && correctStars(auc)
+    )
     filtered = sortAuctions(filtered)
     for (let auc of filtered.slice(0, howmuchshow)) {
-        if (auc.bin) console.log("bin auction")
         let elem = document.createElement('div')
         elem.className = "itempanel"
        
@@ -142,7 +168,9 @@ const updateAuctionBrowser = async (data) => {
     document.getElementById('search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('sort').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
 })()
 
