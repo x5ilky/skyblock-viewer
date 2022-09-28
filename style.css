@@ -142,3 +142,16 @@ span.SPECIAL {
 .star {
     font-weight: 400;
 }
+
+.alert {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 30vw;
+    height: 10vh;
+    background-color: #fff;
+    border-radius: 0 1rem 1rem 0 ;
+    color: black;
+    text-align: center;
+    vertical-align: center;
+}

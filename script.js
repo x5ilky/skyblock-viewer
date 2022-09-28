@@ -149,20 +149,23 @@ const updateAuctionBrowser = async (data) => {
     let res = await fetch("https://api.hypixel.net/skyblock/auctions?page=0")
     let data = await res.json()
     let aucs = []
-    document.querySelector(".auc").innerHTML = ""
+    document.querySelector(".alert").style.display = "block"
     let pages = parseInt(prompt('How many pages (1000 auctions each)? Total pages: ' + data.totalPages))
-    document.querySelector(".auc").innerHTML = "Downloading data: 0/" + pages
+    document.querySelector(".alert").textContent = "Downloading data: 0/" + pages
     for (let i = 0; i < pages; i++) {
         console.log(`Fetching page ${i}...`)
         let res = await fetch("https://api.hypixel.net/skyblock/auctions?page=" + i)
         let data = await res.json()
         console.log(`Fetched page ${i}!`)
-        document.querySelector(".auc").innerHTML = "Downloading data: " + i + "/" + pages
+        document.querySelector(".alert").textContent = "Downloading data: " + (i+1) + "/" + pages
         aucs.push(...data.auctions)
+        data.auctions = aucs
+        updateAuctionBrowser(data)
     }
+    document.querySelector(".alert").style.display = "none"
     
-    data.auctions = aucs
-    updateAuctionBrowser(data)
+    
+    
     console.log(data)
 
     document.getElementById('search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
@@ -170,7 +173,7 @@ const updateAuctionBrowser = async (data) => {
     document.getElementById('binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    document.getElementById('sort').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    document.getElementById('sort').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
 })()
 
