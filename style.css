@@ -11,9 +11,13 @@ body {
 
 .itempanel {
     display: inline-block;
-    width: 128px;
-    height: 128px;
+    width: 96px;
+    height: 96px;
     margin: 10px;
+    background-color: rgba(0, 0, 0, 0.255);
+    padding: 10px;
+    border-radius: 1rem;
+    vertical-align: top;
 }
 
 button {
@@ -22,7 +26,8 @@ button {
 
 div[lore] {
     background-color: rgb(46, 46, 46);
-    position: absolute;
+    width: max-content;
+    
 }
 
 span.c0 {
@@ -167,4 +172,12 @@ h3[credits] {
     background: black;
     width: 40ch;
     border-radius: 1rem;
+}
+
+.info {
+    display: block;
+    position: absolute;
+    transform: translate(96px, -100px);
+    z-index: 10000;
+    width: max-content;
 }
