@@ -1,4 +1,4 @@
-let d;
+let d: AuctionPageResponse;
 let howmuchshow = 50;
 let binonly = false;
 let stopcalc = false;
@@ -115,7 +115,7 @@ function correctStars(auc: AuctionResponse) {
 
 }
 
-const updateAuctionBrowser = async (data: AuctionPageResponse) => {
+const updateAuctionBrowser = async (data: AuctionPageResponse, reload = false) => {
     console.log("Updated auction browser")
     howmuchshow = $$("#show").value
     
@@ -178,6 +178,8 @@ const updateAuctionBrowser = async (data: AuctionPageResponse) => {
         })
     }
 
+    if (!reload) updateAuctionBrowser(d, true)
+
 }
 
 type AuctionPageResponse = {
@@ -222,13 +224,13 @@ type AuctionResponse = {
     let pages = data.totalPages
     if (localStorage.getItem("dev") === "true") pages = 10;
     $$(".alert").textContent = "Downloading data: 0/" + pages
-    $$('#search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    $$('#rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    $$('#show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
-    $$('#sort').addEventListener("change", () => setTimeout(() => {updateAuctionBrowser(data); console.log("test")}, 0))
-    $$('#loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    $$('#search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0))
+    $$('#rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
+    $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
+    $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
+    $$('#show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0))
+    $$('#sort').addEventListener("change", () => setTimeout(() => {updateAuctionBrowser(d); console.log("test")}, 0))
+    $$('#loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0))
     let fetches: Promise<Response>[] = []
     for (let i = 0; i < pages; i++) {
         fetches.push(fetch("https://api.hypixel.net/skyblock/auctions?page=" + i))

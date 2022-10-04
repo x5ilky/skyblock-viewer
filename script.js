@@ -130,7 +130,7 @@ function correctStars(auc) {
     else
         return auc.item_name.includes(val);
 }
-const updateAuctionBrowser = (data) => __awaiter(void 0, void 0, void 0, function* () {
+const updateAuctionBrowser = (data, reload = false) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     console.log("Updated auction browser");
     howmuchshow = $$("#show").value;
@@ -186,6 +186,8 @@ const updateAuctionBrowser = (data) => __awaiter(void 0, void 0, void 0, functio
             alert("Copied the text: " + copyText.value);
         });
     }
+    if (!reload)
+        updateAuctionBrowser(d, true);
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
     $$(".auc").innerHTML = "Fetching page data...";
@@ -197,13 +199,13 @@ const updateAuctionBrowser = (data) => __awaiter(void 0, void 0, void 0, functio
     if (localStorage.getItem("dev") === "true")
         pages = 10;
     $$(".alert").textContent = "Downloading data: 0/" + pages;
-    $$('#search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0));
-    $$('#rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0));
-    $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0));
-    $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(data), 0));
-    $$('#show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0));
-    $$('#sort').addEventListener("change", () => setTimeout(() => { updateAuctionBrowser(data); console.log("test"); }, 0));
-    $$('#loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0));
+    $$('#search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
+    $$('#rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
+    $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
+    $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
+    $$('#show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
+    $$('#sort').addEventListener("change", () => setTimeout(() => { updateAuctionBrowser(d); console.log("test"); }, 0));
+    $$('#loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
     let fetches = [];
     for (let i = 0; i < pages; i++) {
         fetches.push(fetch("https://api.hypixel.net/skyblock/auctions?page=" + i));
