@@ -114,17 +114,23 @@ const updateAuctionBrowser = async (data) => {
         let elem = document.createElement('div')
         elem.className = "itempanel"
        
-        elem.innerHTML = `<b>${formatName(auc)}</b> - ${getPrice(auc)} - Lore: <button id="check-lore${auc.uuid}">Check Lore</button> - <button id="copydata${auc.uuid}">Copy auction command</button>`
+        elem.innerHTML = `<b>${formatName(auc)}</b> - ${getPrice(auc)}`
         document.querySelector(".auc").appendChild(elem)
-        const d = () => {
-            document.getElementById(`check-lore${auc.uuid}`).outerHTML = `<div id="check-lore${auc.uuid}">${parseLore(auc.item_lore)}</div>`
-            document.getElementById(`check-lore${auc.uuid}`).addEventListener('click', () => {
-                document.getElementById(`check-lore${auc.uuid}`).outerHTML = `<button id="check-lore${auc.uuid}">Check Lore</button>`
-                document.getElementById(`check-lore${auc.uuid}`).addEventListener('click', d)
-            })
-        }
-        document.getElementById(`check-lore${auc.uuid}`).addEventListener('click', d)
-        document.getElementById(`copydata${auc.uuid}`).addEventListener('click', () => {
+        
+        elem.addEventListener("mouseenter", () => {
+            let el = document.createElement("div")
+            el.style.position = "absolute"
+            el.classList.add("info")
+            el.innerHTML = `${parseLore(auc.item_lore)}`
+            elem.appendChild(el)
+            position_tooltip(el)
+        })
+
+        elem.addEventListener("mouseleave", () => {
+            document.querySelectorAll('.info').forEach(elem => elem.remove())
+        })
+
+        elem.addEventListener('click', () => {
             var copyText = document.createElement("textarea");
             copyText.value = `/viewauction ${auc.uuid}`
             // Select the text field
@@ -156,21 +162,41 @@ const updateAuctionBrowser = async (data) => {
     document.getElementById('show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
     document.getElementById('sort').addEventListener("change", () => setTimeout(() => {updateAuctionBrowser(data); console.log("test")}, 0))
     document.getElementById('loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(data), 0))
+    let fetches = []
     for (let i = 0; i < pages; i++) {
-        console.log(`Fetching page ${i}...`)
-        let res = await fetch("https://api.hypixel.net/skyblock/auctions?page=" + i)
-        let data = await res.json()
-        console.log(`Fetched page ${i}!`)
-        document.querySelector(".alert").textContent = "Downloading data: " + (i+1) + "/" + pages
-        aucs.push(...data.auctions)
-        data.auctions = aucs
-        updateAuctionBrowser(data)
-        d = data;
+        fetches.push(fetch("https://api.hypixel.net/skyblock/auctions?page=" + i))
+        
     }
-    document.querySelector(".alert").style.display = "none"
+    let loaded = 0;
+    document.querySelector(".alert").textContent = "Downloading data - 0/" + pages;
+    (await Promise.all(fetches)).forEach(async (res) => {
+        let data = await res.json();
+
+        aucs.push(...data.auctions);
+        data.auctions = aucs;
+        updateAuctionBrowser(data);
+        d = data;
+        
+        loaded++;
+        document.querySelector(".alert").textContent = "Downloading auction data - " + loaded + "/" + pages;
+        if (loaded === pages) document.querySelector(".alert").style.display = "none"
+    })
+    
     
     console.log(data)
 
     
 })()
 
+
+
+function position_tooltip(el){
+    // Get .ktooltiptext sibling
+    var tooltip = el;
+  
+    // Get calculated tooltip coordinates and size
+    var tooltip_rect = tooltip.getBoundingClientRect();
+    // Corrections if out of window
+    if ((tooltip_rect.x + tooltip_rect.width) >= window.innerWidth) // Out on the right
+        tooltip.style.transform = "translate(-100%, -100px)"
+  }
