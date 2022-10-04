@@ -7,7 +7,10 @@
     <title>Skyblock Viewer</title>
     <script src="pako.js"></script>
     <script src="nbt.js"></script>
-    <script src="script.js" defer></script>
+    <script>
+        //Using this to reload cache because browsers like to cache things way too much.
+        document.write(`<script src="script.js?=${Math.floor(Math.random() * 10000)}" defer>\<\/script\>`)
+    </script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
