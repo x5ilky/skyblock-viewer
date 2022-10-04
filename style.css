@@ -183,3 +183,15 @@ h3[credits] {
     border-radius: 1rem;
     background-color: rgb(59, 59, 59);
 }
+
+.loaded {
+    position: fixed;
+    color: white;
+    text-align: center;
+    background: black;
+    border-radius: 1rem;
+    bottom: 1rem;
+    width: calc(20vw);
+    left: 50%;
+    transform: translate(-50%);
+}

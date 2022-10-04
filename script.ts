@@ -129,6 +129,7 @@ const updateAuctionBrowser = async (data: AuctionPageResponse, reload = false) =
         && correctStars(auc)
     )
     filtered = sortAuctions(filtered) ?? []
+    $$(".loaded").textContent = `${filtered.slice(0, howmuchshow).length} out of ${filtered.length}`
     for (let auc of filtered.slice(0, howmuchshow)) {
         let elem = document.createElement('div')
         elem.className = "itempanel"

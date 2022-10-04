@@ -144,6 +144,7 @@ const updateAuctionBrowser = (data, reload = false) => __awaiter(void 0, void 0,
             && correctStars(auc);
     });
     filtered = (_a = sortAuctions(filtered)) !== null && _a !== void 0 ? _a : [];
+    $$(".loaded").textContent = `${filtered.slice(0, howmuchshow).length} out of ${filtered.length}`;
     for (let auc of filtered.slice(0, howmuchshow)) {
         let elem = document.createElement('div');
         elem.className = "itempanel";
