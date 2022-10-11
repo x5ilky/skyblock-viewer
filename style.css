@@ -217,3 +217,27 @@ h3[credits] {
 .options > * {
     margin: 0.2rem;
 }
+
+.autocomplete {
+    display:none;
+    position: absolute;
+    left: 1rem;
+    background-color: black;
+    max-width: 512px;
+    max-height: 256px;
+    overflow-x: none;
+}
+
+#search:focus ~ .autocomplete {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+  
+}
+
+.item-autocomplete {
+    width: calc(100% - 2rem);
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+}

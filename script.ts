@@ -189,7 +189,27 @@ let load = (async (redownload = false) => {
     let pages = data.totalPages
     if (localStorage.getItem("dev") === "true") pages = 10;
     $$(".alert").textContent = "Downloading data: 0/" + pages
-    $$('#search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0))
+    $$('#search').addEventListener("input", () => {
+        setTimeout(() => {
+            updateAuctionBrowser(d)
+
+            $$(".autocomplete").innerHTML = ""
+
+            for (let item of items.filter(p => p.name.toLowerCase().startsWith($$('#search').value.toLowerCase()))) {
+                let e = document.createElement("div")
+
+                e.innerHTML = `<div class="item-autocomplete item-${item.id}">${item.name}</div>`
+                $$(".autocomplete").appendChild(e);
+                e.addEventListener('mousedown', () => {
+                    console.log("why")
+                    $$('#search').value = item.name;
+                    updateAuctionBrowser(d)
+
+                })
+            }
+        }, 0);
+        
+    })
     $$('#rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
     $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
     $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))

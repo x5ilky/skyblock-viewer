@@ -166,7 +166,22 @@ let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* 
     if (localStorage.getItem("dev") === "true")
         pages = 10;
     $$(".alert").textContent = "Downloading data: 0/" + pages;
-    $$('#search').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
+    $$('#search').addEventListener("input", () => {
+        setTimeout(() => {
+            updateAuctionBrowser(d);
+            $$(".autocomplete").innerHTML = "";
+            for (let item of items.filter(p => p.name.toLowerCase().startsWith($$('#search').value.toLowerCase()))) {
+                let e = document.createElement("div");
+                e.innerHTML = `<div class="item-autocomplete item-${item.id}">${item.name}</div>`;
+                $$(".autocomplete").appendChild(e);
+                e.addEventListener('mousedown', () => {
+                    console.log("why");
+                    $$('#search').value = item.name;
+                    updateAuctionBrowser(d);
+                });
+            }
+        }, 0);
+    });
     $$('#rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
     $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
     $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
@@ -291,7 +306,6 @@ function getMeanPrice(itemid, auctions, tier) {
         return parseInt((s / n).toFixed(2));
     });
 }
-<<<<<<< HEAD
 function getCheapest(itemid, auctions, tier) {
     let prices = [];
     for (let auc of fil((a) => a.item_id === itemid && a.tier === tier, auctions)) {
@@ -354,7 +368,7 @@ document.addEventListener("keydown", (e) => {
         $$(".alert").style.display = "block";
         $$(".alert").textContent = "Calculating Flips...";
         for (let item of items) {
-            if (ignore.includes(item.id))
+            if (ignore.includes(item.id) || item.id.includes("ADAPTIVE"))
                 continue;
             $$(".alert").textContent = `CC: ${item.id}`;
             let cheap = getCheapest(item.id, d.auctions, item.tier);
@@ -367,9 +381,7 @@ document.addEventListener("keydown", (e) => {
         $$(".alert").style.display = "none";
     }
 });
-=======
 function toggleOptions() {
     var _a;
     (_a = $$(".options")) === null || _a === void 0 ? void 0 : _a.classList.toggle("options-disabled");
 }
->>>>>>> b2c1c36301d3c75233652d9d86e5afc6e04c7919
