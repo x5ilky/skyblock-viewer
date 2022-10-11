@@ -1,0 +1,74 @@
+{
+  "type": "compound",
+  "name": "",
+  "value": {
+    "i": {
+      "type": "list",
+      "value": {
+        "type": "compound",
+        "value": [
+          {
+            "id": { "type": "short", "value": 301 },
+            "Count": { "type": "byte", "value": 1 },
+            "tag": {
+              "type": "compound",
+              "value": {
+                "Unbreakable": { "type": "byte", "value": 1 },
+                "HideFlags": { "type": "int", "value": 254 },
+                "display": {
+                  "type": "compound",
+                  "value": {
+                    "Lore": {
+                      "type": "list",
+                      "value": {
+                        "type": "string",
+                        "value": [
+                          "§7Gear Score: §d330",
+                          "§7Strength: §c+25 §8(+25)",
+                          "§7Health: §a+150 §8(+150)",
+                          "§7Defense: §a+50 §8(+50)",
+                          "§7Speed: §a+25 §8(+25)",
+                          "§7Intelligence: §a+50 §8(+50)",
+                          "",
+                          "§6Ability: Spirit Glide",
+                          "§7Double jump to fly around as a",
+                          "§7spirit.",
+                          "§8Mana Cost: §3250",
+                          "§8Cooldown: §a60s",
+                          "",
+                          "§7§8This item can be reforged!",
+                          "§7§4❣ §cRequires §aThe Catacombs Floor",
+                          "§aIV Completion§c.",
+                          "§5§lEPIC DUNGEON BOOTS"
+                        ]
+                      }
+                    },
+                    "color": { "type": "int", "value": 12566463 },
+                    "Name": { "type": "string", "value": "§5Spirit Boots" }
+                  }
+                },
+                "ExtraAttributes": {
+                  "type": "compound",
+                  "value": {
+                    "color": { "type": "string", "value": "191:191:191" },
+                    "originTag": { "type": "string", "value": "UNKNOWN" },
+                    "id": { "type": "string", "value": "THORNS_BOOTS" },
+                    "uuid": {
+                      "type": "string",
+                      "value": "eff76aaa-1251-4a9a-870e-b946b89c8aa5"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "value": "10/30/21 4:43 AM"
+                    }
+                  }
+                }
+              }
+            },
+            "Damage": { "type": "short", "value": 0 }
+          }
+        ]
+      }
+    }
+  }
+}

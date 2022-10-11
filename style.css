@@ -144,6 +144,10 @@ span.SPECIAL {
     color: #FF5555;
 }
 
+span.VERY_SPECIAL {
+    color: #AA0000;
+}
+
 .star {
     font-weight: 400;
 }

@@ -130,10 +130,11 @@ function correctStars(auc) {
     else
         return auc.item_name.includes(val);
 }
-const updateAuctionBrowser = (data, reload = false) => __awaiter(void 0, void 0, void 0, function* () {
+const updateAuctionBrowser = (data, reload = false) => {
     var _a;
     console.log("Updated auction browser");
     howmuchshow = $$("#show").value;
+    console.log(data);
     $$(".auc").innerHTML = "";
     let filtered = data.auctions.filter(auc => {
         var _a;
@@ -146,51 +147,16 @@ const updateAuctionBrowser = (data, reload = false) => __awaiter(void 0, void 0,
     filtered = (_a = sortAuctions(filtered)) !== null && _a !== void 0 ? _a : [];
     $$(".loaded").textContent = `${filtered.slice(0, howmuchshow).length} out of ${filtered.length}`;
     for (let auc of filtered.slice(0, howmuchshow)) {
-        let elem = document.createElement('div');
-        elem.className = "itempanel";
-        elem.innerHTML = `<b>${formatName(auc)}</b> - ${getPrice(auc)}`;
-        $$(".auc").appendChild(elem);
-        elem.addEventListener("mouseenter", () => {
-            let el = document.createElement("div");
-            el.style.position = "absolute";
-            el.classList.add("info");
-            el.innerHTML = `${parseLore(auc.item_lore)}<br><span class="cd">Internal Id: </span><span class="c7">${auc.item_id}</span><br><span class="c6">Lowest Bin: </span><span class="ce lowestbin">Calculating...</span><br><span class="c6">Market Price: </span><span class="ce marketprice">Calculating...</span><br><span class="c6">Mean Price: </span><span class="ce meanprice">Calculating...</span>`;
-            // [*] Extra Data Place
-            elem.appendChild(el);
-            position_tooltip(el);
-            setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                let low = yield getLowestBin(auc.item_id, data.auctions);
-                $$(".lowestbin").textContent = commaPrice(low);
-            }), 0);
-            setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                let low = yield getMarketPrice(auc.item_id, data.auctions);
-                $$(".marketprice").textContent = commaPrice(low);
-            }), 0);
-            setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                let low = yield getMeanPrice(auc.item_id, data.auctions);
-                $$(".meanprice").textContent = commaPrice(low);
-            }), 0);
-        });
-        elem.addEventListener("mouseleave", () => {
-            $$all('.info').forEach((elem) => elem.remove());
-            stopcalc = true;
-        });
-        elem.addEventListener('click', () => {
-            var copyText = document.createElement("textarea");
-            copyText.value = `/viewauction ${auc.uuid}`;
-            // Select the text field
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); // For mobile devices
-            // Copy the text inside the text field
-            navigator.clipboard.writeText(copyText.value);
-            // Alert the copied text
-            alert("Copied the text: " + copyText.value);
-        });
+        renderPanel(auc, data);
     }
-    if (!reload)
-        updateAuctionBrowser(d, true);
-});
+};
+let items = [];
 (() => __awaiter(void 0, void 0, void 0, function* () {
+    let res = yield fetch("https://api.hypixel.net/resources/skyblock/items");
+    let data = yield res.json();
+    items = data.items;
+}))();
+let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* () {
     $$(".auc").innerHTML = "Fetching page data...";
     let res = yield fetch("https://api.hypixel.net/skyblock/auctions?page=0");
     let data = yield res.json();
@@ -205,7 +171,7 @@ const updateAuctionBrowser = (data, reload = false) => __awaiter(void 0, void 0,
     $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
     $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
     $$('#show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
-    $$('#sort').addEventListener("change", () => setTimeout(() => { updateAuctionBrowser(d); console.log("test"); }, 0));
+    $$('#sort').addEventListener("change", () => setTimeout(() => { updateAuctionBrowser(d); }, 0));
     $$('#loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
     let fetches = [];
     for (let i = 0; i < pages; i++) {
@@ -215,20 +181,20 @@ const updateAuctionBrowser = (data, reload = false) => __awaiter(void 0, void 0,
     $$(".alert").textContent = "Downloading data - 0/" + pages;
     (yield Promise.all(fetches)).forEach((res) => __awaiter(void 0, void 0, void 0, function* () {
         let data = yield res.json();
-        aucs.push(...data.auctions.map((d) => {
-            d.item_id = parseNBT(d.item_bytes).value.i.value.value[0].tag.value.ExtraAttributes.value.id.value;
-            return d;
+        aucs.push(...data.auctions.map((da) => {
+            da.item_id = parseNBT(da.item_bytes).value.i.value.value[0].tag.value.ExtraAttributes.value.id.value;
+            return da;
         }));
         data.auctions = aucs;
-        updateAuctionBrowser(data);
         d = data;
+        updateAuctionBrowser(data);
         loaded++;
-        $$(".alert").textContent = "Downloading auction data - " + loaded + "/" + pages;
+        $$(".alert").textContent = (redownload ? "Red" : "D") + "ownloading auction data - " + loaded + "/" + pages;
         if (loaded === pages)
             $$(".alert").style.display = "none";
     }));
     console.log(data);
-}))();
+}));
 function position_tooltip(el) {
     // Get .ktooltiptext sibling
     var tooltip = el;
@@ -250,10 +216,10 @@ function parseNBT(bytes) {
     let parsed = nbt.parseUncompressed(deflated);
     return parsed;
 }
-function getLowestBin(itemid, auctions) {
+function getLowestBin(itemid, auctions, tier) {
     return __awaiter(this, void 0, void 0, function* () {
         let cheapest = 99999999999999;
-        for (let auc of fil((a) => a.item_id === itemid, auctions)) {
+        for (let auc of fil((a) => a.item_id === itemid && a.tier === tier, auctions)) {
             if (auc.bin && auc.starting_bid < cheapest) {
                 cheapest = auc.starting_bid;
             }
@@ -270,17 +236,33 @@ const fil = (fn, a) => {
     }
     return f;
 };
-function getMarketPrice(itemid, auctions) {
+function getMarketPrice(itemid, auctions, tier) {
     return __awaiter(this, void 0, void 0, function* () {
         let cheapest = 99999999999999;
+        let cheapest2 = 99999999999998;
+        let cheapest3 = 99999999999997;
         let prices = [];
-        for (let auc of fil((a) => a.item_id === itemid, auctions)) {
+        for (let auc of fil((a) => a.item_id === itemid && a.tier === tier, auctions)) {
             if (auc.bin) {
-                if (auc.starting_bid < cheapest)
+                if (auc.starting_bid < cheapest) {
+                    cheapest3 = cheapest2;
+                    cheapest2 = cheapest;
                     cheapest = auc.starting_bid;
+                }
+                else if (auc.starting_bid < cheapest2) {
+                    cheapest3 = cheapest2;
+                    cheapest2 = auc.starting_bid;
+                }
+                else if (auc.starting_bid < cheapest3) {
+                    cheapest3 = auc.starting_bid;
+                }
                 prices.push(auc.starting_bid);
             }
         }
+        if ([99999999999999, 99999999999998, 99999999999997].includes(cheapest2))
+            cheapest2 = cheapest;
+        if ([99999999999999, 99999999999998, 99999999999997].includes(cheapest3))
+            cheapest3 = cheapest2;
         prices.sort();
         function median(values) {
             return __awaiter(this, void 0, void 0, function* () {
@@ -295,17 +277,92 @@ function getMarketPrice(itemid, auctions) {
                 return (values[half - 1] + values[half]) / 2.0;
             });
         }
-        return cheapest === 99999999999999 ? -1 : ((yield median(prices)) + cheapest) / 2;
+        return cheapest === 99999999999999 ? -1 : ((yield median(prices)) + cheapest + cheapest2 + cheapest3) / 4;
     });
 }
-function getMeanPrice(itemid, auctions) {
+function getMeanPrice(itemid, auctions, tier) {
     return __awaiter(this, void 0, void 0, function* () {
         let s = 0;
         let n = 0;
-        for (let auc of fil((a) => a.item_id === itemid, auctions)) {
+        for (let auc of fil((a) => a.item_id === itemid && a.tier === tier, auctions)) {
             s += (auc.starting_bid);
             n++;
         }
         return parseInt((s / n).toFixed(2));
     });
 }
+function getCheapest(itemid, auctions, tier) {
+    let prices = [];
+    for (let auc of fil((a) => a.item_id === itemid && a.tier === tier, auctions)) {
+        if (auc.bin) {
+            prices.push(auc);
+        }
+    }
+    return prices.sort((a, b) => a.starting_bid - b.starting_bid);
+}
+load();
+function renderPanel(auc, data) {
+    let elem = document.createElement('div');
+    elem.className = "itempanel";
+    elem.innerHTML = `<b>${formatName(auc)}</b> - ${getPrice(auc)}`;
+    $$(".auc").appendChild(elem);
+    elem.addEventListener("mouseenter", () => {
+        let el = document.createElement("div");
+        el.style.position = "absolute";
+        el.classList.add("info");
+        el.innerHTML = `${parseLore(auc.item_lore)}<br><span class="cd">Internal Id: </span><span class="c7">${auc.item_id}</span><br><span class="c6">Lowest Bin: </span><span class="ce lowestbin">Calculating...</span><br><span class="c6">Market Price: </span><span class="ce marketprice">Calculating...</span><br><span class="c6">Mean Price: </span><span class="ce meanprice">Calculating...</span>`;
+        // [*] Extra Data Place
+        elem.appendChild(el);
+        position_tooltip(el);
+        setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+            let low = yield getLowestBin(auc.item_id, data.auctions, auc.tier);
+            $$(".lowestbin").textContent = commaPrice(low);
+        }), 0);
+        setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+            let low = yield getMarketPrice(auc.item_id, data.auctions, auc.tier);
+            $$(".marketprice").textContent = commaPrice(low);
+        }), 0);
+        setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+            let low = yield getMeanPrice(auc.item_id, data.auctions, auc.tier);
+            $$(".meanprice").textContent = commaPrice(low);
+        }), 0);
+    });
+    elem.addEventListener("mouseleave", () => {
+        $$all('.info').forEach((elem) => elem.remove());
+        stopcalc = true;
+    });
+    elem.addEventListener('click', () => {
+        var copyText = document.createElement("textarea");
+        copyText.value = `/viewauction ${auc.uuid}`;
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
+        // Alert the copied text
+        alert("Copied the text: " + copyText.value);
+    });
+}
+let marketthreshold = 100000;
+let lbinthreshold = 100000;
+let ignore = ["PET", "POTION"];
+let minmax = [0, 4.1 * 1000000];
+document.addEventListener("keydown", (e) => {
+    if (e.shiftKey && e.ctrlKey && e.key === "F") {
+        $$(".auc").innerHTML = "Calculated Flips";
+        $$(".alert").style.display = "block";
+        $$(".alert").textContent = "Calculating Flips...";
+        for (let item of items) {
+            if (ignore.includes(item.id))
+                continue;
+            $$(".alert").textContent = `CC: ${item.id}`;
+            let cheap = getCheapest(item.id, d.auctions, item.tier);
+            if (cheap[0] !== undefined && cheap[0].item_lore.toLowerCase().includes("skin"))
+                continue;
+            if (cheap.length > 2 && cheap[1].starting_bid - cheap[0].starting_bid > lbinthreshold && cheap[0].starting_bid >= minmax[0] && cheap[0].starting_bid <= minmax[1]) {
+                renderPanel(cheap[0], d);
+            }
+        }
+        $$(".alert").style.display = "none";
+    }
+});
