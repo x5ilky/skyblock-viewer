@@ -450,3 +450,7 @@ document.addEventListener("keydown", (e) => {
         $$(".alert").style.display = "none"
     }
 });
+
+function toggleOptions() {
+    $$(".options")?.classList.toggle("options-disabled")    
+}

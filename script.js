@@ -291,6 +291,7 @@ function getMeanPrice(itemid, auctions, tier) {
         return parseInt((s / n).toFixed(2));
     });
 }
+<<<<<<< HEAD
 function getCheapest(itemid, auctions, tier) {
     let prices = [];
     for (let auc of fil((a) => a.item_id === itemid && a.tier === tier, auctions)) {
@@ -366,3 +367,9 @@ document.addEventListener("keydown", (e) => {
         $$(".alert").style.display = "none";
     }
 });
+=======
+function toggleOptions() {
+    var _a;
+    (_a = $$(".options")) === null || _a === void 0 ? void 0 : _a.classList.toggle("options-disabled");
+}
+>>>>>>> b2c1c36301d3c75233652d9d86e5afc6e04c7919
