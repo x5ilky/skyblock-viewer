@@ -137,12 +137,15 @@ const updateAuctionBrowser = (data, reload = false) => {
     console.log(data);
     $$(".auc").innerHTML = "";
     let filtered = data.auctions.filter(auc => {
-        var _a;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return auc.item_name.toLowerCase().includes($$('#search').value.toLowerCase())
             && correctRarity(auc)
             && correctBin((_a = auc.bin) !== null && _a !== void 0 ? _a : false)
             && correctLore(auc)
-            && correctStars(auc);
+            && correctStars(auc)
+            && (((_d = (_c = (_b = auc.extradata) === null || _b === void 0 ? void 0 : _b.hot_potato_count) === null || _c === void 0 ? void 0 : _c.value) !== null && _d !== void 0 ? _d : 0) === parseInt($$("#hotpotato").value) || $$("#hotpotato").value === "any")
+            && (((_g = (_f = (_e = auc.extradata) === null || _e === void 0 ? void 0 : _e.art_of_war_count) === null || _f === void 0 ? void 0 : _f.value) !== null && _g !== void 0 ? _g : 0) === ($$("#artofwar").checked ? 1 : 0))
+            && (((_k = (_j = (_h = auc.extradata) === null || _h === void 0 ? void 0 : _h.rarity_upgrades) === null || _j === void 0 ? void 0 : _j.value) !== null && _k !== void 0 ? _k : 0) === ($$("#recom").checked ? 1 : 0));
     });
     filtered = (_a = sortAuctions(filtered)) !== null && _a !== void 0 ? _a : [];
     $$(".loaded").textContent = `${filtered.slice(0, howmuchshow).length} out of ${filtered.length}`;
@@ -155,6 +158,11 @@ let items = [];
     let res = yield fetch("https://api.hypixel.net/resources/skyblock/items");
     let data = yield res.json();
     items = data.items;
+    items.map(d => {
+        if (d.id.startsWith("STARRED_"))
+            d.name = "⚚ " + d.name;
+        return d;
+    });
 }))();
 let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* () {
     $$(".auc").innerHTML = "Fetching page data...";
@@ -170,7 +178,7 @@ let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* 
         setTimeout(() => {
             updateAuctionBrowser(d);
             $$(".autocomplete").innerHTML = "";
-            for (let item of items.filter(p => p.name.toLowerCase().startsWith($$('#search').value.toLowerCase()))) {
+            for (let item of items.filter(p => p.name.toLowerCase().includes($$('#search').value.toLowerCase()))) {
                 let e = document.createElement("div");
                 e.innerHTML = `<div class="item-autocomplete item-${item.id}">${item.name}</div>`;
                 $$(".autocomplete").appendChild(e);
@@ -182,12 +190,11 @@ let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* 
             }
         }, 0);
     });
-    $$('#rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
-    $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
-    $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
-    $$('#show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
-    $$('#sort').addEventListener("change", () => setTimeout(() => { updateAuctionBrowser(d); }, 0));
-    $$('#loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
+    let updateids = ["rarity", "binonly", "stars", "show", "sort", "loresearch", "artofwar", "hotpotato", "recom"];
+    for (let id of updateids) {
+        $$('#' + id).addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
+        $$('#' + id).addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
+    }
     let fetches = [];
     for (let i = 0; i < pages; i++) {
         fetches.push(fetch("https://api.hypixel.net/skyblock/auctions?page=" + i));
@@ -197,7 +204,10 @@ let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* 
     (yield Promise.all(fetches)).forEach((res) => __awaiter(void 0, void 0, void 0, function* () {
         let data = yield res.json();
         aucs.push(...data.auctions.map((da) => {
-            da.item_id = parseNBT(da.item_bytes).value.i.value.value[0].tag.value.ExtraAttributes.value.id.value;
+            let parsed = parseNBT(da.item_bytes);
+            let attributes = parsed.value.i.value.value[0].tag.value.ExtraAttributes.value;
+            da.item_id = attributes.id.value;
+            da.extradata = attributes;
             return da;
         }));
         data.auctions = aucs;

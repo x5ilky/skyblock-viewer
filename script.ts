@@ -128,6 +128,9 @@ const updateAuctionBrowser = (data: AuctionPageResponse, reload = false) => {
         && correctBin(auc.bin ?? false) 
         && correctLore(auc)
         && correctStars(auc)
+        && ((auc.extradata?.hot_potato_count?.value ?? 0) === parseInt($$("#hotpotato").value) || $$("#hotpotato").value === "any")
+        && ((auc.extradata?.art_of_war_count?.value ?? 0) === ($$("#artofwar").checked ? 1 : 0))
+        && ((auc.extradata?.rarity_upgrades?.value ?? 0) === ($$("#recom").checked ? 1 : 0))
     )
     filtered = sortAuctions(filtered) ?? []
     $$(".loaded").textContent = `${filtered.slice(0, howmuchshow).length} out of ${filtered.length}`
@@ -167,10 +170,7 @@ type AuctionResponse = {
     bids: {auction_id: string, bidder: string, profile_id: string, amount: number, timestamp: bigint}[],
     bin: true | undefined,
     item_id: string,
-    cheapests: AuctionResponse[],
-    market_price: number,
-    mean_price: number,
-    lowest_bin: number,
+    extradata: any;
 }
 let items: any[] = [];
 
@@ -178,6 +178,10 @@ let items: any[] = [];
     let res = await fetch("https://api.hypixel.net/resources/skyblock/items")
     let data = await res.json()
     items = data.items
+    items.map(d => {
+        if (d.id.startsWith("STARRED_")) d.name = "⚚ " + d.name;
+        return d;
+    })
 })()
 
 let load = (async (redownload = false) => {
@@ -195,7 +199,7 @@ let load = (async (redownload = false) => {
 
             $$(".autocomplete").innerHTML = ""
 
-            for (let item of items.filter(p => p.name.toLowerCase().startsWith($$('#search').value.toLowerCase()))) {
+            for (let item of items.filter(p => p.name.toLowerCase().includes($$('#search').value.toLowerCase()))) {
                 let e = document.createElement("div")
 
                 e.innerHTML = `<div class="item-autocomplete item-${item.id}">${item.name}</div>`
@@ -210,12 +214,11 @@ let load = (async (redownload = false) => {
         }, 0);
         
     })
-    $$('#rarity').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
-    $$('#binonly').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
-    $$('#stars').addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
-    $$('#show').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0))
-    $$('#sort').addEventListener("change", () => setTimeout(() => {updateAuctionBrowser(d)}, 0))
-    $$('#loresearch').addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0))
+    let updateids = ["rarity", "binonly", "stars", "show", "sort", "loresearch", "artofwar", "hotpotato", "recom"]
+    for (let id of updateids) {
+        $$('#' + id).addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0))
+        $$('#' + id).addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0))
+    }
     let fetches: Promise<Response>[] = []
     for (let i = 0; i < pages; i++) {
         fetches.push(fetch("https://api.hypixel.net/skyblock/auctions?page=" + i))
@@ -227,7 +230,10 @@ let load = (async (redownload = false) => {
         let data: any = await res.json();
 
         aucs.push(...data.auctions.map((da: AuctionResponse) => {
-            da.item_id = parseNBT(da.item_bytes).value.i.value.value[0].tag.value.ExtraAttributes.value.id.value
+            let parsed = parseNBT(da.item_bytes)
+            let attributes = parsed.value.i.value.value[0].tag.value.ExtraAttributes.value
+            da.item_id = attributes.id.value
+            da.extradata = attributes
             return da;
         }));
         data.auctions = aucs;
