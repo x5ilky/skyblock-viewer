@@ -366,3 +366,7 @@ async function getMeanPrice(itemid: string, auctions: AuctionResponse[]) {
 
     return parseInt((s/n).toFixed(2))
 }
+
+function toggleOptions() {
+    $$(".options")?.classList.toggle("options-disabled")    
+}

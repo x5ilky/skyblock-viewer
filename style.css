@@ -195,3 +195,21 @@ h3[credits] {
     left: 50%;
     transform: translate(-50%);
 }
+
+.options-disabled {
+    display: none !important;
+}
+
+.options {
+    position: absolute;
+    right: 0;
+    width: 20vw;
+    height: 100vw;
+    background-color: rgb(30, 30, 30);
+    border-radius: 1rem;
+    top: 0;
+}
+
+.options > * {
+    margin: 0.2rem;
+}
