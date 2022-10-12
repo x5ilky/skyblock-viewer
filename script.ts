@@ -129,7 +129,7 @@ const updateAuctionBrowser = (data: AuctionPageResponse, reload = false) => {
         && correctLore(auc)
         && correctStars(auc)
         && ((auc.extradata?.hot_potato_count?.value ?? 0) === parseInt($$("#hotpotato").value) || $$("#hotpotato").value === "any")
-        && (((auc.extradata?.art_of_war_count?.value ?? 0) === ($$("#artofwar").value === "true" ? 1 : 0)) || ($$("#artofwar").value === "any"))
+        && correctArtofWar(auc)
         && (((auc.extradata?.rarity_upgrades?.value ?? 0) === ($$("#recom").value === "true" ? 1 : 0)) || ($$("#recom").value === "any"))
     )
     filtered = sortAuctions(filtered) ?? []
@@ -479,4 +479,12 @@ document.addEventListener("keydown", (e) => {
 
 function toggleOptions() {
     $$(".options")?.classList.toggle("options-disabled")    
+}
+
+function correctArtofWar(auc: AuctionResponse) {
+    return (((auc.extradata?.art_of_war_count?.value ?? 0) === ($$("#artofwar").value === "true" ? 1 : 0)) || ($$("#artofwar").value === "any"))
+}
+
+function correctRecombobulated(auc: AuctionResponse) {
+    
 }

@@ -137,15 +137,15 @@ const updateAuctionBrowser = (data, reload = false) => {
     console.log(data);
     $$(".auc").innerHTML = "";
     let filtered = data.auctions.filter(auc => {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        var _a, _b, _c, _d, _e, _f, _g;
         return auc.item_name.toLowerCase().includes($$('#search').value.toLowerCase())
             && correctRarity(auc)
             && correctBin((_a = auc.bin) !== null && _a !== void 0 ? _a : false)
             && correctLore(auc)
             && correctStars(auc)
             && (((_d = (_c = (_b = auc.extradata) === null || _b === void 0 ? void 0 : _b.hot_potato_count) === null || _c === void 0 ? void 0 : _c.value) !== null && _d !== void 0 ? _d : 0) === parseInt($$("#hotpotato").value) || $$("#hotpotato").value === "any")
-            && (((_g = (_f = (_e = auc.extradata) === null || _e === void 0 ? void 0 : _e.art_of_war_count) === null || _f === void 0 ? void 0 : _f.value) !== null && _g !== void 0 ? _g : 0) === ($$("#artofwar").checked ? 1 : 0))
-            && (((_k = (_j = (_h = auc.extradata) === null || _h === void 0 ? void 0 : _h.rarity_upgrades) === null || _j === void 0 ? void 0 : _j.value) !== null && _k !== void 0 ? _k : 0) === ($$("#recom").checked ? 1 : 0));
+            && correctArtofWar(auc)
+            && ((((_g = (_f = (_e = auc.extradata) === null || _e === void 0 ? void 0 : _e.rarity_upgrades) === null || _f === void 0 ? void 0 : _f.value) !== null && _g !== void 0 ? _g : 0) === ($$("#recom").value === "true" ? 1 : 0)) || ($$("#recom").value === "any"));
     });
     filtered = (_a = sortAuctions(filtered)) !== null && _a !== void 0 ? _a : [];
     $$(".loaded").textContent = `${filtered.slice(0, howmuchshow).length} out of ${filtered.length}`;
@@ -394,4 +394,10 @@ document.addEventListener("keydown", (e) => {
 function toggleOptions() {
     var _a;
     (_a = $$(".options")) === null || _a === void 0 ? void 0 : _a.classList.toggle("options-disabled");
+}
+function correctArtofWar(auc) {
+    var _a, _b, _c;
+    return ((((_c = (_b = (_a = auc.extradata) === null || _a === void 0 ? void 0 : _a.art_of_war_count) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : 0) === ($$("#artofwar").value === "true" ? 1 : 0)) || ($$("#artofwar").value === "any"));
+}
+function correctRecombobulated(auc) {
 }
