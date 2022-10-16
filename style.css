@@ -3,10 +3,15 @@
     src: url(mcfont.otf);
 }
 
+:root {
+    --bg-color: rgb(72, 72, 72)
+}
+
 body {
-    background-color: rgb(72, 72, 72);
+    background-color: var(--bg-color);
     font-family: Minecraft, consolas, monospace;
     color: white;
+    overflow-x: hidden;
 }
 
 .itempanel {
@@ -240,4 +245,137 @@ h3[credits] {
     height: 16px;
     background-color: rgba(255, 255, 255, 0.2);
     padding: 1rem;
+}
+
+.navbar {
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 32px;
+    align-items: center;
+
+}
+
+.indent-down {
+    position: absolute;
+    top: 32px;
+}
+
+.navbar-padder {
+    width: 16px;
+}
+
+.auction-browser {
+    animation: slide-out ease-in-out 0.8s;
+    display: block;
+    position: absolute;
+    width: 100vw;
+    left: 100%;
+    background-color: rgb(38, 38, 38);
+    border-radius: 1rem;
+    
+}
+.profile-viewer {
+    animation: slide-out ease-in-out 0.8s;
+    display: block;
+    position: absolute;
+    width: 100vw;
+    left: 100%;
+    background-color: rgb(38, 38, 38);
+    border-radius: 1rem;
+    min-height: 100vh;
+}
+
+.appear {
+    display: block;
+    animation: slide-in ease-in-out 0.8s;
+    left: 0;
+    overflow-y: scroll;
+}
+
+@keyframes slide-out {
+    0% {
+        left: 0;
+    }
+
+    100% {
+        left: 100vw;
+    }
+}
+
+@keyframes slide-in {
+    100% {
+        left: 0;
+        
+    }
+
+    0% {
+        left: 100vw;
+    }
+}
+
+.homepage {
+    padding-top: 1rem;
+
+}
+
+*[center] {
+    text-align: center;
+}
+
+/** custom scrollbar */
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+    
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 1rem;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+/** navbar buttons */
+
+.navbar-button {
+    width: 128px;
+    height: 24px;
+    border-radius: 0;
+    background-color: rgb(111, 111, 111);
+    border: 2px outset rgb(40, 40, 40);
+    color: white;
+    font-family: Minecraft;
+}
+
+.settings {
+    position: absolute;
+    width: 40vw;
+    height: 70vh;
+    background-color:rgb(86, 86, 86);
+    left: 50%;
+    top: 50%;
+    padding: 1rem;
+    border-radius: 1rem;
+    transform: translate(-50%, -50%);
+}
+
+#username {
+    left: 50%;
+    transform: translate(-50%, 0);
+    position: absolute;
+    width: 60vw;
+    height: 32px;
 }

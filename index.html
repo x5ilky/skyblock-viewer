@@ -14,79 +14,102 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <input type="text" id="search"> 
-    <div class="autocomplete"></div>
-    <button onclick="toggleOptions();">Toggle Options</button>
-    <div class="options options-disabled">
-        <label for="">Rarity: </label><select name="" id="rarity"> 
-            <option value="NONE">None</option>
-            <option value="COMMON">Common</option>
-            <option value="UNCOMMON">Uncommon</option>
-            <option value="RARE">Rare</option>
-            <option value="EPIC">Epic</option>
-            <option value="LEGENDARY">Legendary</option>
-            <option value="MYTHIC">Mythic</option>
-            <option value="SUPREME">Divine</option>
-            <option value="SPECIAL">Special</option>
-            <option value="VERY_SPECIAL">Very Special</option>
-        </select><br> <label for="">How much auctions to show: </label><input type="number" name="" id="show" value="50"> <br>
-        <label for="">Type sort: </label><select name="" id="binonly">
-            <option value="both">Both</option>
-            <option value="auction">Auctions Only</option>
-            <option value="bin">BIN only</option>
-        </select> <br><label for="">Price sort: </label><select name="" id="sort">
-            <option value="random">Random</option>
-            <option value="lowest">Price: Lowest to Highest</option>
-            <option value="highest">Price: Highest to Lowest</option>
-        </select> <br><label for="">Search by Lore: </label><input type="text" id="loresearch">
-        <br><label for="">Sort by stars: </label>
-        <select name="" id="stars">
-            <option value="any">Any Stars</option>
-            <option value="no">No stars</option>
-            <option value="✪">✪</option>
-            <option value="✪✪">✪✪</option>
-            <option value="✪✪✪">✪✪✪</option>
-            <option value="✪✪✪✪">✪✪✪✪</option>
-            <option value="✪✪✪✪✪">✪✪✪✪✪</option>
-            <option value="➊">➊</option>
-            <option value="➋">➋</option>
-            <option value="➌">➌</option>
-            <option value="➍">➍</option>
-            <option value="➎">➎</option>
-        </select><br>
-        <label for="artofwar">Art of war</label><select name=""  id="artofwar">
-            <option value="any">Any</option>
-            <option value="true">True</option>
-            <option value="false">False</option>
-        </select><br>
-        <label for="">Hot potato books</label><select name="" id="hotpotato">
-            <option value="any">Any</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-        </select><br>
-        <label for="recom">Recombobulated</label><select name=""  id="recom">
-            <option value="any">Any</option>
-            <option value="true">True</option>
-            <option value="false">False</option>
-        </select>
+    <div class="navbar">
+        <span class="navbar-padder"></span>
+        <span class="title">Skyblock Viewer</span>
+        <span class="navbar-padder"></span>
+        <span class="navbar-padder"></span>
+        <button class="view-auction navbar-button" onclick="$$('.auction-browser').classList.toggle('appear'); this.classList.toggle('navbar-on')">Auction Browser</button>
+        <button class="view-pv navbar-button" onclick="$$('.profile-viewer').classList.toggle('appear')">Profile Viewer</button>
+        <button class="navbar-button settings-button" onclick="g_toggleSettings()">Settings</button>
     </div>
-     <button reload onclick="load(true)">Redownload Data</button>
-    <div class="auc">
-
+    <div class="settings" style="display: none;">
+        <label for="">API key: </label><input type="password" id="apikey"><button class="saveapi">Save</button>
     </div>
+    <div class="homepage">
+        <h1 center>Welcome to Skyblock Viewer!</h1>
+        <h3 center>Click the tabs on the navbar on the top to see the features.</h3>
+        <h3 center>The site may be laggy when downloading auction data because of the amount of processing required.</h3>
+    </div>
+    <div class="auction-browser indent-down">
+        <input type="text" id="search"> 
+        <div class="autocomplete"></div>
+        <button onclick="toggleOptions();">Toggle Options</button>
+        <div class="options options-disabled">
+            <label for="">Rarity: </label><select name="" id="rarity"> 
+                <option value="NONE">None</option>
+                <option value="COMMON">Common</option>
+                <option value="UNCOMMON">Uncommon</option>
+                <option value="RARE">Rare</option>
+                <option value="EPIC">Epic</option>
+                <option value="LEGENDARY">Legendary</option>
+                <option value="MYTHIC">Mythic</option>
+                <option value="SUPREME">Divine</option>
+                <option value="SPECIAL">Special</option>
+                <option value="VERY_SPECIAL">Very Special</option>
+            </select><br> <label for="">How much auctions to show: </label><input type="number" name="" id="show" value="50"> <br>
+            <label for="">Type sort: </label><select name="" id="binonly">
+                <option value="both">Both</option>
+                <option value="auction">Auctions Only</option>
+                <option value="bin">BIN only</option>
+            </select> <br><label for="">Price sort: </label><select name="" id="sort">
+                <option value="random">Random</option>
+                <option value="lowest">Price: Lowest to Highest</option>
+                <option value="highest">Price: Highest to Lowest</option>
+            </select> <br><label for="">Search by Lore: </label><input type="text" id="loresearch">
+            <br><label for="">Sort by stars: </label>
+            <select name="" id="stars">
+                <option value="any">Any Stars</option>
+                <option value="no">No stars</option>
+                <option value="✪">✪</option>
+                <option value="✪✪">✪✪</option>
+                <option value="✪✪✪">✪✪✪</option>
+                <option value="✪✪✪✪">✪✪✪✪</option>
+                <option value="✪✪✪✪✪">✪✪✪✪✪</option>
+                <option value="➊">➊</option>
+                <option value="➋">➋</option>
+                <option value="➌">➌</option>
+                <option value="➍">➍</option>
+                <option value="➎">➎</option>
+            </select><br>
+            <label for="artofwar">Art of war</label><select name=""  id="artofwar">
+                <option value="any">Any</option>
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select><br>
+            <label for="">Hot potato books</label><select name="" id="hotpotato">
+                <option value="any">Any</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+            </select><br>
+            <label for="recom">Recombobulated</label><select name=""  id="recom">
+                <option value="any">Any</option>
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+        </div>
+         <button reload onclick="load(true)">Redownload Data</button>
+        <div class="auc">
+    
+        </div>
+    </div>
+    <div class="profile-viewer indent-down">
+        <input type="text" id="username" placeholder="Username" center>
+    </div>
+    
     <div class="alert" style="display: none">
     
     </div>
