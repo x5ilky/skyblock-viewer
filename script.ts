@@ -492,9 +492,7 @@ declare namespace nbt {
         }
     });
     
-    function toggleOptions() {
-        $$(".options")?.classList.toggle("options-disabled")    
-    }
+    
     
     function correctArtofWar(auc: AuctionResponse) {
         return (((auc.extradata?.art_of_war_count?.value ?? 0) === ($$("#artofwar").value === "true" ? 1 : 0)) || ($$("#artofwar").value === "any"))
@@ -523,5 +521,12 @@ declare namespace nbt {
     // ! Profile Viewer Functions ! //
 
     // * mojang username to uuid endpoint: https://api.mojang.com/users/profiles/minecraft/
+
+    $$("#pvgo").addEventListener("click", async () => {
+        $$("")
+    })
 })()
 
+function toggleOptions() {
+    $$(".options")?.classList.toggle("options-disabled")    
+}

@@ -389,17 +389,14 @@ function $$all(query) {
                 let cheap = getCheapest(item.id, d.auctions, item.tier);
                 if (cheap[0] !== undefined && cheap[0].item_lore.toLowerCase().includes("skin"))
                     continue;
-                if (cheap.length > 2 && cheap[1].starting_bid - cheap[0].starting_bid > lbinthreshold && cheap[0].starting_bid >= minmax[0] && cheap[0].starting_bid <= minmax[1]) {
+                let marketpric = getMarketPrice(item.id, d.auctions, item.tier);
+                if (cheap.length > 2 && cheap[1].starting_bid - cheap[0].starting_bid > lbinthreshold && cheap[0].starting_bid >= minmax[0] && cheap[0].starting_bid <= minmax[1] && cheap.filter(d => d.starting_bid <= marketpric).length <= 4) {
                     renderPanel(cheap[0], d);
                 }
             }
             $$(".alert").style.display = "none";
         }
     });
-    function toggleOptions() {
-        var _a;
-        (_a = $$(".options")) === null || _a === void 0 ? void 0 : _a.classList.toggle("options-disabled");
-    }
     function correctArtofWar(auc) {
         var _a, _b, _c;
         return ((((_c = (_b = (_a = auc.extradata) === null || _a === void 0 ? void 0 : _a.art_of_war_count) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : 0) === ($$("#artofwar").value === "true" ? 1 : 0)) || ($$("#artofwar").value === "any"));
@@ -423,3 +420,7 @@ function $$all(query) {
     // ! Profile Viewer Functions ! //
     // * mojang username to uuid endpoint: https://api.mojang.com/users/profiles/minecraft/
 })();
+function toggleOptions() {
+    var _a;
+    (_a = $$(".options")) === null || _a === void 0 ? void 0 : _a.classList.toggle("options-disabled");
+}

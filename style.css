@@ -273,6 +273,7 @@ h3[credits] {
     position: absolute;
     width: 100vw;
     left: 100%;
+    min-height: calc(100vh - 32px);
     background-color: rgb(38, 38, 38);
     border-radius: 1rem;
     
@@ -378,4 +379,13 @@ h3[credits] {
     position: absolute;
     width: 60vw;
     height: 32px;
+}
+
+#pvgo {
+    width: 128px;
+    height: 32px;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, 0);
+    top: 48px;
 }
