@@ -32,7 +32,8 @@ button {
 div[lore] {
     background-color: rgb(46, 46, 46);
     width: max-content;
-    
+    padding: 0.5rem;
+    border-radius: 1rem;
 }
 
 span.c0 {
@@ -167,9 +168,10 @@ span.VERY_SPECIAL {
     border-radius: 0 1rem 1rem 0 ;
     color: black;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
+    text-align: center;
+    font-size: 1.5rem;
+    justify-content:center;
+    align-items:center;
 }
 
 h3[credits] {
@@ -191,6 +193,8 @@ h3[credits] {
     width: max-content;
     border-radius: 1rem;
     background-color: rgb(59, 59, 59);
+    padding: 1rem;
+
 }
 
 .loaded {
@@ -255,6 +259,7 @@ h3[credits] {
     width: 100vw;
     height: 32px;
     align-items: center;
+    
 
 }
 
@@ -388,4 +393,14 @@ h3[credits] {
     position: absolute;
     transform: translate(-50%, 0);
     top: 48px;
+}
+
+.pvpadder {
+    height: 82px;
+    width: 100vw;
+}
+
+lbdr {
+    display: inline-block;
+    width: 16px;
 }
