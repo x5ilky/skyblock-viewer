@@ -192,6 +192,11 @@ function correctStars(auc: AuctionResponse) {
 const updateAuctionBrowser = (data: AuctionPageResponse, reload = false) => {
   console.log("Updated auction browser");
   howmuchshow = $$("#show").value;
+  let uuids: string[] = $$("#uuidsearch")
+    .value.replace(/\s+/g)
+    .split(",")
+    .filter((a: string) => a !== "");
+  console.log(uuids);
   console.log(data);
   $$(".auc").innerHTML = "";
 
@@ -202,6 +207,7 @@ const updateAuctionBrowser = (data: AuctionPageResponse, reload = false) => {
       correctBin(auc.bin ?? false) &&
       correctLore(auc) &&
       correctStars(auc) &&
+      (uuids.length > 0 ? uuids.includes(auc.uuid) : true) &&
       ((auc.extradata?.hot_potato_count?.value ?? 0) ===
         parseInt($$("#hotpotato").value) ||
         $$("#hotpotato").value === "any") &&
@@ -268,6 +274,7 @@ let load = async (redownload = false) => {
     "show",
     "sort",
     "loresearch",
+    "uuidsearch",
     "artofwar",
     "hotpotato",
     "recom",

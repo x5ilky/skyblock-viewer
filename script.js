@@ -28,16 +28,16 @@ function commaPrice(pr) {
         newprice += price[i];
     }
     if (price.length > 3 && price.length % 3 != 0)
-        newprice += ',';
+        newprice += ",";
     let other = Math.floor(price.length / 3);
     for (let i = 0; i < other; i++) {
-        newprice += price.slice(price.length % 3 + i * 3, price.length % 3 + i * 3 + 3);
+        newprice += price.slice((price.length % 3) + i * 3, (price.length % 3) + i * 3 + 3);
         if (i != other - 1)
-            newprice += ',';
+            newprice += ",";
     }
     let decimal = "";
     if (pr.toString().split(".")[1] !== undefined)
-        decimal = '.' + pr.toString().split(".")[1];
+        decimal = "." + pr.toString().split(".")[1];
     return newprice + decimal;
 }
 const parseLore = (lore) => {
@@ -79,7 +79,9 @@ const correctRarity = (auc) => {
     }
 };
 const formatName = (auc) => {
-    return `<span class="${auc.tier} star">${auc.item_name.split(/[➊➋➌➍➎✪]/g).join("")}</span><span class="ce star">${auc.item_name.replace(/[^✪]/g, "")}</span><span class="c4">${auc.item_name.replace(/[^➊➋➌➍➎]/g, "")}</span>`;
+    return `<span class="${auc.tier} star">${auc.item_name
+        .split(/[➊➋➌➍➎✪]/g)
+        .join("")}</span><span class="ce star">${auc.item_name.replace(/[^✪]/g, "")}</span><span class="c4">${auc.item_name.replace(/[^➊➋➌➍➎]/g, "")}</span>`;
 };
 const correctBin = (isbin) => {
     let rarity = $$("#binonly").value;
@@ -97,7 +99,7 @@ const sortAuctions = (filtered) => {
     if (sortby === "random")
         return filtered;
     else if (sortby === "lowest")
-        return filtered.sort((a, b) => (getAuctionPrice(a) - getAuctionPrice(b)));
+        return filtered.sort((a, b) => getAuctionPrice(a) - getAuctionPrice(b));
     else if (sortby === "highest")
         return filtered.sort((a, b) => -(getAuctionPrice(a) - getAuctionPrice(b)));
 };
@@ -105,15 +107,15 @@ function getPrice(auc) {
     if (auc.bin)
         return `<span class="c6">Price: </span><span class="ce">${commaPrice(auc.starting_bid)}</span>`;
     else {
-        let price = Math.max(auc.starting_bid, ...auc.bids.map(a => a.amount));
+        let price = Math.max(auc.starting_bid, ...auc.bids.map((a) => a.amount));
         return `<span class="c6">Highest Bid: </span><span class="ce">${commaPrice(price)}</span>`;
     }
 }
 function getAuctionPrice(auc) {
-    return Math.max(auc.starting_bid, ...auc.bids.map(a => a.amount));
+    return Math.max(auc.starting_bid, ...auc.bids.map((a) => a.amount));
 }
 function correctLore(auc) {
-    let val = $$('#loresearch').value.toLowerCase().split(",");
+    let val = $$("#loresearch").value.toLowerCase().split(",");
     for (let a of val) {
         if (!auc.item_lore.toLowerCase().includes(a))
             return false;
@@ -143,18 +145,28 @@ const updateAuctionBrowser = (data, reload = false) => {
     var _a;
     console.log("Updated auction browser");
     howmuchshow = $$("#show").value;
+    let uuids = $$("#uuidsearch")
+        .value.replace(/\s+/g)
+        .split(",")
+        .filter((a) => a !== "");
+    console.log(uuids);
     console.log(data);
     $$(".auc").innerHTML = "";
-    let filtered = data.auctions.filter(auc => {
+    let filtered = data.auctions.filter((auc) => {
         var _a, _b, _c, _d, _e, _f, _g;
-        return auc.item_name.toLowerCase().includes($$('#search').value.toLowerCase())
-            && correctRarity(auc)
-            && correctBin((_a = auc.bin) !== null && _a !== void 0 ? _a : false)
-            && correctLore(auc)
-            && correctStars(auc)
-            && (((_d = (_c = (_b = auc.extradata) === null || _b === void 0 ? void 0 : _b.hot_potato_count) === null || _c === void 0 ? void 0 : _c.value) !== null && _d !== void 0 ? _d : 0) === parseInt($$("#hotpotato").value) || $$("#hotpotato").value === "any")
-            && correctArtofWar(auc)
-            && ((((_g = (_f = (_e = auc.extradata) === null || _e === void 0 ? void 0 : _e.rarity_upgrades) === null || _f === void 0 ? void 0 : _f.value) !== null && _g !== void 0 ? _g : 0) === ($$("#recom").value === "true" ? 1 : 0)) || ($$("#recom").value === "any"));
+        return auc.item_name.toLowerCase().includes($$("#search").value.toLowerCase()) &&
+            correctRarity(auc) &&
+            correctBin((_a = auc.bin) !== null && _a !== void 0 ? _a : false) &&
+            correctLore(auc) &&
+            correctStars(auc) &&
+            (uuids.length > 0 ? uuids.includes(auc.uuid) : true) &&
+            (((_d = (_c = (_b = auc.extradata) === null || _b === void 0 ? void 0 : _b.hot_potato_count) === null || _c === void 0 ? void 0 : _c.value) !== null && _d !== void 0 ? _d : 0) ===
+                parseInt($$("#hotpotato").value) ||
+                $$("#hotpotato").value === "any") &&
+            correctArtofWar(auc) &&
+            (((_g = (_f = (_e = auc.extradata) === null || _e === void 0 ? void 0 : _e.rarity_upgrades) === null || _f === void 0 ? void 0 : _f.value) !== null && _g !== void 0 ? _g : 0) ===
+                ($$("#recom").value === "true" ? 1 : 0) ||
+                $$("#recom").value === "any");
     });
     filtered = (_a = sortAuctions(filtered)) !== null && _a !== void 0 ? _a : [];
     $$(".loaded").textContent = `${filtered.slice(0, howmuchshow).length} out of ${filtered.length}`;
@@ -167,13 +179,13 @@ let items = [];
     let res = yield fetch("https://api.hypixel.net/resources/skyblock/items");
     let data = yield res.json();
     items = data.items;
-    items.map(d => {
+    items.map((d) => {
         if (d.id.startsWith("STARRED_"))
             d.name = "⚚ " + d.name;
         return d;
     });
 }))();
-let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* () {
+let load = (redownload = false) => __awaiter(void 0, void 0, void 0, function* () {
     $$(".auc").innerHTML = "Fetching page data...";
     let res = yield fetch("https://api.hypixel.net/skyblock/auctions?page=0");
     let data = yield res.json();
@@ -183,26 +195,37 @@ let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* 
     if (localStorage.getItem("dev") === "true")
         pages = 10;
     $$(".alert").textContent = "Downloading data: 0/" + pages;
-    $$('#search').addEventListener("input", () => {
+    $$("#search").addEventListener("input", () => {
         setTimeout(() => {
             updateAuctionBrowser(d);
             $$(".autocomplete").innerHTML = "";
-            for (let item of items.filter(p => p.name.toLowerCase().includes($$('#search').value.toLowerCase()))) {
+            for (let item of items.filter((p) => p.name.toLowerCase().includes($$("#search").value.toLowerCase()))) {
                 let e = document.createElement("div");
                 e.innerHTML = `<div class="item-autocomplete item-${item.id}">${item.name}</div>`;
                 $$(".autocomplete").appendChild(e);
-                e.addEventListener('mousedown', () => {
+                e.addEventListener("mousedown", () => {
                     console.log("why");
-                    $$('#search').value = item.name;
+                    $$("#search").value = item.name;
                     updateAuctionBrowser(d);
                 });
             }
         }, 0);
     });
-    let updateids = ["rarity", "binonly", "stars", "show", "sort", "loresearch", "artofwar", "hotpotato", "recom"];
+    let updateids = [
+        "rarity",
+        "binonly",
+        "stars",
+        "show",
+        "sort",
+        "loresearch",
+        "uuidsearch",
+        "artofwar",
+        "hotpotato",
+        "recom",
+    ];
     for (let id of updateids) {
-        $$('#' + id).addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
-        $$('#' + id).addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
+        $$("#" + id).addEventListener("change", () => setTimeout(() => updateAuctionBrowser(d), 0));
+        $$("#" + id).addEventListener("input", () => setTimeout(() => updateAuctionBrowser(d), 0));
     }
     let fetches = [];
     for (let i = 0; i < pages; i++) {
@@ -223,23 +246,31 @@ let load = ((redownload = false) => __awaiter(void 0, void 0, void 0, function* 
         d = data;
         updateAuctionBrowser(data);
         loaded++;
-        $$(".alert").textContent = (redownload ? "Red" : "D") + "ownloading auction data - " + loaded + "/" + pages;
+        $$(".alert").textContent =
+            (redownload ? "Red" : "D") +
+                "ownloading auction data - " +
+                loaded +
+                "/" +
+                pages;
         if (loaded === pages)
             $$(".alert").style.display = "none";
     }));
     console.log(data);
-}));
+});
 function position_tooltip(el) {
     // Get .ktooltiptext sibling
     var tooltip = el;
     // Get calculated tooltip coordinates and size
     var tooltip_rect = tooltip.getBoundingClientRect();
     // Corrections if out of window
-    if ((tooltip_rect.x + tooltip_rect.width) >= window.innerWidth) // Out on the right
+    if (tooltip_rect.x + tooltip_rect.width >= window.innerWidth)
+        // Out on the right
         tooltip.style.transform = "translate(-100%, -100px)";
 }
 function parseNBT(bytes) {
-    let atobed = atob(bytes).split("").map(c => c.charCodeAt(0));
+    let atobed = atob(bytes)
+        .split("")
+        .map((c) => c.charCodeAt(0));
     let deflated = pako.inflate(atobed);
     let parsed = nbt.parseUncompressed(deflated);
     return parsed;
@@ -305,7 +336,9 @@ function getMarketPrice(itemid, auctions, tier) {
                 return (values[half - 1] + values[half]) / 2.0;
             });
         }
-        return cheapest === 99999999999999 ? -1 : ((yield median(prices)) + cheapest + cheapest2 + cheapest3) / 4;
+        return cheapest === 99999999999999
+            ? -1
+            : ((yield median(prices)) + cheapest + cheapest2 + cheapest3) / 4;
     });
 }
 function getMeanPrice(itemid, auctions, tier) {
@@ -313,7 +346,7 @@ function getMeanPrice(itemid, auctions, tier) {
         let s = 0;
         let n = 0;
         for (let auc of fil((a) => a.item_id === itemid && a.tier === tier, auctions)) {
-            s += (auc.starting_bid);
+            s += auc.starting_bid;
             n++;
         }
         return parseInt((s / n).toFixed(2));
@@ -330,7 +363,7 @@ function getCheapest(itemid, auctions, tier) {
 }
 load();
 function renderPanel(auc, data, appender = $$(".auc")) {
-    let elem = document.createElement('div');
+    let elem = document.createElement("div");
     elem.className = "itempanel";
     elem.innerHTML = `<b>${formatName(auc)}</b> - ${getPrice(auc)}`;
     appender.appendChild(elem);
@@ -378,7 +411,10 @@ function renderPanel(auc, data, appender = $$(".auc")) {
         }), 0);
         setTimeout(() => __awaiter(this, void 0, void 0, function* () {
             let low = getCheapest(auc.item_id, data.auctions, auc.tier);
-            $$(".lbins").textContent = low.slice(0, 3).map(d => commaPrice(d.starting_bid)).join(" | ");
+            $$(".lbins").textContent = low
+                .slice(0, 3)
+                .map((d) => commaPrice(d.starting_bid))
+                .join(" | ");
         }), 0);
         setTimeout(() => __awaiter(this, void 0, void 0, function* () {
             let low = getCheapest(auc.item_id, data.auctions, auc.tier);
@@ -389,16 +425,17 @@ function renderPanel(auc, data, appender = $$(".auc")) {
         }), 0);
     });
     elem.addEventListener("mouseleave", () => {
-        $$all('.info').forEach((elem) => elem.remove());
+        $$all(".info").forEach((elem) => elem.remove());
         stopcalc = true;
     });
 }
 function correctArtofWar(auc) {
     var _a, _b, _c;
-    return ((((_c = (_b = (_a = auc.extradata) === null || _a === void 0 ? void 0 : _a.art_of_war_count) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : 0) === ($$("#artofwar").value === "true" ? 1 : 0)) || ($$("#artofwar").value === "any"));
+    return (((_c = (_b = (_a = auc.extradata) === null || _a === void 0 ? void 0 : _a.art_of_war_count) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : 0) ===
+        ($$("#artofwar").value === "true" ? 1 : 0) ||
+        $$("#artofwar").value === "any");
 }
-function correctRecombobulated(auc) {
-}
+function correctRecombobulated(auc) { }
 function toggleSettings() {
     if ($$(".settings").style.display === "block")
         $$(".settings").style.display = "none";
@@ -413,11 +450,13 @@ $$("#pvgo").addEventListener("click", () => __awaiter(void 0, void 0, void 0, fu
     let data = yield res.json();
     let isError = data.error !== undefined;
     const formatItemName = (auc) => {
-        return `<span class="${auc.rarity.toUpperCase()} star">${auc.base_name.split(/[➊➋➌➍➎✪]/g).join("")}</span><span class="ce star">${auc.base_name.replace(/[^✪]/g, "")}</span><span class="c4">${auc.base_name.replace(/[^➊➋➌➍➎]/g, "")}</span>`;
+        return `<span class="${auc.rarity.toUpperCase()} star">${auc.base_name
+            .split(/[➊➋➌➍➎✪]/g)
+            .join("")}</span><span class="ce star">${auc.base_name.replace(/[^✪]/g, "")}</span><span class="c4">${auc.base_name.replace(/[^➊➋➌➍➎]/g, "")}</span>`;
     };
     function loadProfile(data) {
         function renderItem(itemdata, appender) {
-            let elem = document.createElement('div');
+            let elem = document.createElement("div");
             elem.className = "itempanel";
             elem.innerHTML = `<b>${formatItemName(data)}</b>}`;
             appender.appendChild(elem);
@@ -431,12 +470,13 @@ $$("#pvgo").addEventListener("click", () => __awaiter(void 0, void 0, void 0, fu
                 position_tooltip(el);
             });
             elem.addEventListener("mouseleave", () => {
-                $$all('.info').forEach((elem) => elem.remove());
+                $$all(".info").forEach((elem) => elem.remove());
                 stopcalc = true;
             });
         }
         let items = data.items;
-        $$(".details").innerHTML += "<div class=\"accessories\"></div><div class=\"inventory\"></div>";
+        $$(".details").innerHTML +=
+            '<div class="accessories"></div><div class="inventory"></div>';
         items.accessories.forEach((d) => {
             renderItem(d, $$(".accessories"));
         });
@@ -480,16 +520,21 @@ function generateFlips() {
                 continue;
             $$(".alert").textContent = `CC: ${item.id}`;
             let cheap = getCheapest(item.id, d.auctions, item.tier);
-            if (cheap[0] !== undefined && cheap[0].item_lore.toLowerCase().includes("skin"))
+            if (cheap[0] !== undefined &&
+                cheap[0].item_lore.toLowerCase().includes("skin"))
                 continue;
             let marketpric = getMarketPrice(item.id, d.auctions, item.tier);
-            if (cheap.length > 2 && cheap[1].starting_bid - cheap[0].starting_bid > lbinthreshold && cheap[0].starting_bid >= minmax[0] && cheap[0].starting_bid <= minmax[1] && cheap.filter(d => d.starting_bid <= marketpric).length <= 4) {
+            if (cheap.length > 2 &&
+                cheap[1].starting_bid - cheap[0].starting_bid > lbinthreshold &&
+                cheap[0].starting_bid >= minmax[0] &&
+                cheap[0].starting_bid <= minmax[1] &&
+                cheap.filter((d) => d.starting_bid <= marketpric).length <= 4) {
                 cheap[0].p = cheap[1].starting_bid - cheap[0].starting_bid;
                 renders.push(cheap[0]);
             }
         }
         renders.sort((a, b) => b.p - a.p);
-        renders.forEach(r => {
+        renders.forEach((r) => {
             renderPanel(r, d);
         });
         $$(".alert").style.display = "none";
