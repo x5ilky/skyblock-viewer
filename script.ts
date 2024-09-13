@@ -373,7 +373,7 @@ const fil = (fn: (d: any) => boolean, a: any[]) => {
   return f;
 };
 
-let marketPriceElem = $$("marketpricealgo") as HTMLSelectElement;
+let marketPriceElem = $$("#marketpricealgo") as HTMLSelectElement;
 let marketPriceAlgo = marketPriceElem.value;
 marketPriceElem.addEventListener("change", (e) => {
   setTimeout(() => marketPriceAlgo = marketPriceElem.value, 0);

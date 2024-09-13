@@ -295,7 +295,7 @@ const fil = (fn, a) => {
     }
     return f;
 };
-let marketPriceElem = $$("marketpricealgo");
+let marketPriceElem = $$("#marketpricealgo");
 let marketPriceAlgo = marketPriceElem.value;
 marketPriceElem.addEventListener("change", (e) => {
     setTimeout(() => marketPriceAlgo = marketPriceElem.value, 0);
