@@ -24,7 +24,11 @@
         <button class="navbar-button gflips-button" onclick="generateFlips()">Generate Flips (WIP)</button>
     </div>
     <div class="settings" style="display: none;">
-        <label for="">API key: </label><input type="password" id="apikey"><button class="saveapi">Save</button>
+        <label for="">API key: </label><input type="password" id="apikey"><button class="saveapi">Save</button><br>
+        <label for="">Market Price Algorithm: </label><select name="" id="marketpricealgo">
+            <option value="smart">Smart (bottom 4 + median)</option>
+            <option value="bottom5">Median of bottom 5</option>
+        </select><button class="saveapi">Save</button>
     </div>
     <div class="homepage">
         <h1 center>Welcome to Skyblock Viewer!</h1>
