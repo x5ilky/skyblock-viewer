@@ -373,57 +373,47 @@ const fil = (fn: (d: any) => boolean, a: any[]) => {
   return f;
 };
 
-async function getMarketPrice(
+let marketPriceElem = $$("marketpricealgo") as HTMLSelectElement;
+let marketPriceAlgo = marketPriceElem.value;
+marketPriceElem.addEventListener("change", (e) => {
+  setTimeout(() => marketPriceAlgo = marketPriceElem.value, 0);
+})
+    async function median(values: number[]) {
+      if (values.length === 0) throw new Error("No inputs");
+
+      values.sort(function (a, b) {
+        return a - b;
+      });
+
+      var half = Math.floor(values.length / 2);
+
+      if (values.length % 2) return values[half];
+
+      return (values[half - 1] + values[half]) / 2.0;
+    }
+const getMarketPrice = async (
   itemid: string,
   auctions: AuctionResponse[],
   tier: string
-) {
-  let cheapest = 99999999999999;
-  let cheapest2 = 99999999999998;
-  let cheapest3 = 99999999999997;
-  let prices = [];
-  for (let auc of fil(
-    (a: AuctionResponse) => a.item_id === itemid && a.tier === tier,
-    auctions
-  )) {
-    if (auc.bin) {
-      if (auc.starting_bid < cheapest) {
-        cheapest3 = cheapest2;
-        cheapest2 = cheapest;
+): Promise<number> => {
+    let filtered = auctions.filter(
+      (a: AuctionResponse) => a.item_id === itemid && a.tier === tier && a.bin,
+    ).map(a => a.starting_bid);
+      filtered.sort((a, b) => a - b)
+  if (marketPriceAlgo === "smart") {
+    let cheapest = filtered[0] ?? -1;
+    let cheapest2 = filtered?.[1] ?? cheapest;
+    let cheapest3 = filtered?.[2] ?? cheapest2;
 
-        cheapest = auc.starting_bid;
-      } else if (auc.starting_bid < cheapest2) {
-        cheapest3 = cheapest2;
-        cheapest2 = auc.starting_bid;
-      } else if (auc.starting_bid < cheapest3) {
-        cheapest3 = auc.starting_bid;
-      }
-
-      prices.push(auc.starting_bid);
-    }
+    return ((await median(filtered)) + cheapest + cheapest2 + cheapest3) / 4;
+  } else if (marketPriceAlgo === "bottom5") {
+    let cheapest = filtered[0] ?? -1;
+    let cheapest2 = filtered?.[1] ?? cheapest;
+    let cheapest3 = filtered?.[2] ?? cheapest2;
+    let cheapest4 = filtered?.[3] ?? cheapest3;
+    return await median([cheapest, cheapest2, cheapest3, cheapest4])    
   }
-  if ([99999999999999, 99999999999998, 99999999999997].includes(cheapest2))
-    cheapest2 = cheapest;
-  if ([99999999999999, 99999999999998, 99999999999997].includes(cheapest3))
-    cheapest3 = cheapest2;
-  prices.sort();
-  async function median(values: number[]) {
-    if (values.length === 0) throw new Error("No inputs");
-
-    values.sort(function (a, b) {
-      return a - b;
-    });
-
-    var half = Math.floor(values.length / 2);
-
-    if (values.length % 2) return values[half];
-
-    return (values[half - 1] + values[half]) / 2.0;
-  }
-
-  return cheapest === 99999999999999
-    ? -1
-    : ((await median(prices)) + cheapest + cheapest2 + cheapest3) / 4;
+  return -1;
 }
 
 async function getMeanPrice(

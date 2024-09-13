@@ -185,7 +185,7 @@ let items = [];
         return d;
     });
 }))();
-let load = (redownload = false) => __awaiter(void 0, void 0, void 0, function* () {
+let load = (...args_1) => __awaiter(void 0, [...args_1], void 0, function* (redownload = false) {
     $$(".auc").innerHTML = "Fetching page data...";
     let res = yield fetch("https://api.hypixel.net/skyblock/auctions?page=0");
     let data = yield res.json();
@@ -295,52 +295,43 @@ const fil = (fn, a) => {
     }
     return f;
 };
-function getMarketPrice(itemid, auctions, tier) {
+let marketPriceElem = $$("marketpricealgo");
+let marketPriceAlgo = marketPriceElem.value;
+marketPriceElem.addEventListener("change", (e) => {
+    setTimeout(() => marketPriceAlgo = marketPriceElem.value, 0);
+});
+function median(values) {
     return __awaiter(this, void 0, void 0, function* () {
-        let cheapest = 99999999999999;
-        let cheapest2 = 99999999999998;
-        let cheapest3 = 99999999999997;
-        let prices = [];
-        for (let auc of fil((a) => a.item_id === itemid && a.tier === tier, auctions)) {
-            if (auc.bin) {
-                if (auc.starting_bid < cheapest) {
-                    cheapest3 = cheapest2;
-                    cheapest2 = cheapest;
-                    cheapest = auc.starting_bid;
-                }
-                else if (auc.starting_bid < cheapest2) {
-                    cheapest3 = cheapest2;
-                    cheapest2 = auc.starting_bid;
-                }
-                else if (auc.starting_bid < cheapest3) {
-                    cheapest3 = auc.starting_bid;
-                }
-                prices.push(auc.starting_bid);
-            }
-        }
-        if ([99999999999999, 99999999999998, 99999999999997].includes(cheapest2))
-            cheapest2 = cheapest;
-        if ([99999999999999, 99999999999998, 99999999999997].includes(cheapest3))
-            cheapest3 = cheapest2;
-        prices.sort();
-        function median(values) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (values.length === 0)
-                    throw new Error("No inputs");
-                values.sort(function (a, b) {
-                    return a - b;
-                });
-                var half = Math.floor(values.length / 2);
-                if (values.length % 2)
-                    return values[half];
-                return (values[half - 1] + values[half]) / 2.0;
-            });
-        }
-        return cheapest === 99999999999999
-            ? -1
-            : ((yield median(prices)) + cheapest + cheapest2 + cheapest3) / 4;
+        if (values.length === 0)
+            throw new Error("No inputs");
+        values.sort(function (a, b) {
+            return a - b;
+        });
+        var half = Math.floor(values.length / 2);
+        if (values.length % 2)
+            return values[half];
+        return (values[half - 1] + values[half]) / 2.0;
     });
 }
+const getMarketPrice = (itemid, auctions, tier) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d, _e, _f, _g;
+    let filtered = auctions.filter((a) => a.item_id === itemid && a.tier === tier && a.bin).map(a => a.starting_bid);
+    filtered.sort((a, b) => a - b);
+    if (marketPriceAlgo === "smart") {
+        let cheapest = (_a = filtered[0]) !== null && _a !== void 0 ? _a : -1;
+        let cheapest2 = (_b = filtered === null || filtered === void 0 ? void 0 : filtered[1]) !== null && _b !== void 0 ? _b : cheapest;
+        let cheapest3 = (_c = filtered === null || filtered === void 0 ? void 0 : filtered[2]) !== null && _c !== void 0 ? _c : cheapest2;
+        return ((yield median(filtered)) + cheapest + cheapest2 + cheapest3) / 4;
+    }
+    else if (marketPriceAlgo === "bottom5") {
+        let cheapest = (_d = filtered[0]) !== null && _d !== void 0 ? _d : -1;
+        let cheapest2 = (_e = filtered === null || filtered === void 0 ? void 0 : filtered[1]) !== null && _e !== void 0 ? _e : cheapest;
+        let cheapest3 = (_f = filtered === null || filtered === void 0 ? void 0 : filtered[2]) !== null && _f !== void 0 ? _f : cheapest2;
+        let cheapest4 = (_g = filtered === null || filtered === void 0 ? void 0 : filtered[3]) !== null && _g !== void 0 ? _g : cheapest3;
+        return yield median([cheapest, cheapest2, cheapest3, cheapest4]);
+    }
+    return -1;
+});
 function getMeanPrice(itemid, auctions, tier) {
     return __awaiter(this, void 0, void 0, function* () {
         let s = 0;
